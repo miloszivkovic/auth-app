@@ -4,4 +4,6 @@ import com.common.models.Session;
 
 public interface SessionDao {
     Session getById(String sessionId);
+
+    Session createSession(String username);
 }

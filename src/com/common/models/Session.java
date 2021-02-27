@@ -3,6 +3,7 @@ package com.common.models;
 import java.util.Date;
 
 public class Session {
+    // TODO: use UUID
     private String sessionId;
 
     private String username;
@@ -28,5 +29,9 @@ public class Session {
 
     public Date getExpirationDate() {
         return expirationDate;
+    }
+
+    public boolean isExpired() {
+        return getExpirationDate().before(new Date());
     }
 }

@@ -4,7 +4,6 @@ import com.common.models.Session;
 import com.persistence.dao.SessionDao;
 
 import javax.inject.Inject;
-import java.util.Date;
 
 public class AuthServiceImpl implements AuthService {
     private final SessionDao sessionDao;
@@ -21,10 +20,15 @@ public class AuthServiceImpl implements AuthService {
         }
 
         Session currentSession = sessionDao.getById(sessionId);
-        if (currentSession.getExpirationDate().after(new Date())) {
+        if (!currentSession.isExpired()) {
             return currentSession.getUsername();
         }
 
         return null;
+    }
+
+    @Override
+    public Session createSession(String username) {
+        return sessionDao.createSession(username);
     }
 }

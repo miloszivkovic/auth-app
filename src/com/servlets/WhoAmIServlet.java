@@ -2,9 +2,11 @@ package com.servlets;
 
 import com.common.CookieName;
 import com.common.HttpConstants;
+import com.common.models.Session;
 import com.service.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -19,8 +21,7 @@ public class WhoAmIServlet extends BaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType(HttpConstants.TEXT_HTML);
-
+        // TODO: check security questions regarding session ids in cookies etc
         // TODO: replace with proper dto
         String currentUser = null;
         String sessionId = getCookieValueByCookieName(req, CookieName.SESSION);
@@ -28,8 +29,12 @@ public class WhoAmIServlet extends BaseServlet {
             currentUser = authService.getCurrentUser(sessionId);
         }
 
-        // TODO: session refresh - set user's cookie to new session
-        // TODO: extract html formatting somewhere?
+        resp.setContentType(HttpConstants.TEXT_HTML);
+
+        if (currentUser != null) {
+            Session newSession = authService.createSession(currentUser);
+            resp.addCookie(new Cookie(CookieName.SESSION.toString(), newSession.getSessionId()));
+        }
 
         PrintWriter out = resp.getWriter();
         out.println("<!DOCTYPE html>");
